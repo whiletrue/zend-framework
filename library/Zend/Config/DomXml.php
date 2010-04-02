@@ -16,7 +16,7 @@ Class Zend_Config_DomXml extends Zend_Config {
         
         if (!$configSrc instanceof DOMDocument) {
             $dom = new DOMDocument();
-            if (!$dom->load($configSrc)) {
+            if (!$dom->load( $configSrc)) {
                 throw new Zend_Config_Exception('Could not parse ' . $filename);
             }
             
