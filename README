@@ -1,0 +1,10 @@
+Custom Components for the ZendFramework
+---------------------------------------------------------
+
+Zend_Config_DomXml
+---------------------------------------------------------
+Zend_Config adapter identical to Zend_Config_Xml but
+uses Dom instead of Simplexml to parse the configuration 
+file. This allows to work with xincludes and configuration 
+data can be validated based on the same principles that
+are supported by the Dom. 
