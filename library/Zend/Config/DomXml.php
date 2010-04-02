@@ -147,7 +147,7 @@ Class Zend_Config_DomXml extends Zend_Config {
     private function _getSections(DOMDocument $dom) {
         $xp = new DOMXPath($dom);
         $sections = array();
-        $sectionlist = $xp->auery("/*/*");
+        $sectionlist = $xp->query("/*/*");
         foreach($sectionlist as $section) {
             $sections[$section->nodeName] = $section;
         }

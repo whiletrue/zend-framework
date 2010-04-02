@@ -1,0 +1,5 @@
+#Thu Apr 01 19:35:50 CEST 2010
+eclipse.preferences.version=1
+include_path=0;/ZendFramework-Custom
+phpVersion=php5.3
+use_asp_tags_as_php=false
