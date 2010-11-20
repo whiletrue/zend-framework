@@ -8,3 +8,33 @@ ussing the DOM Api instead of Simplexml to parse the
 configuration file. This allows to work with xincludes 
 and configuration data can be validated based on the
 principles supported by the DOM extension. 
+
+
+Zend_Log_Writer_StreamRotatable
+---------------------------------------------------------
+Extends Zend_Log_Writer_Stream with functionality for 
+closing/reopening the stream resource after instantiating.
+Moved stream opening calls from the constructor to a
+public open() method. Rotating is implemented by calling 
+shutdown() and open() with the new file or stream on the
+writer instance. 
+
+New methods:
+- open($streamOrUrl, $mode=NULL)
+- rotate($newStreamOrUrl, $mode=NULL)
+
+
+Zend_Log_Writer_Logfile
+---------------------------------------------------------
+Logfile writer extending Zend_Log_Writer_Stream. 
+Constructor takes two parameters `logdir` and `logfileFormat`
+to define a basedir for the logfiles and a format pattern
+for logfile names, e.g. 'foolog-%id%-%date%.log'.
+The array passed to rotate() contains the keys and values 
+that will substitute the placeholders of the format pattern. 
+
+
+Zend_Application_Resource_Log
+---------------------------------------------------------
+Custom log resource loader. Generic instantiation of 
+logwriters from Zend Application resource config.
