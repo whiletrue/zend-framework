@@ -26,7 +26,7 @@ New methods:
 
 Zend_Log_Writer_Logfile
 ---------------------------------------------------------
-Logfile writer extending Zend_Log_Writer_Stream. 
+Logfile writer extending Zend_Log_Writer_StreamRotatable. 
 Constructor takes two parameters `logdir` and `logfileFormat`
 to define a basedir for the logfiles and a format pattern
 for logfile names, e.g. 'foolog-%id%-%date%.log'.
