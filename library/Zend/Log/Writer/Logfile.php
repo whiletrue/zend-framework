@@ -1,28 +1,43 @@
 <?php
 Class Zend_Log_Writer_Logfile extends Zend_Log_Writer_StreamRotatable {
 
-    protected $_logdir;
-    protected $_logfileFormat = '';
-    protected $_Logfile = '';
+    protected $_rotateDir;
+    protected $_rotateFormat = '';
+    protected $_logfile = '';
     
-    public function __construct($logdir, $logfileFormat) {
-        $this->setLogDir($logdir);
-        $this->setLogfileFormat($logfileFormat);
-        parent::__construct();
+    /**
+     * Constructor
+     * 
+     * @param logfile               logfile
+     * @param rotateDir             directory where to move rotated logfile
+     * @param rotateFormat      filename format for rotated logfile
+     * @param mode                  mode
+     * @throws Zend_Log_Exception
+     */
+    public function __construct($logfile, $rotateDir, $rotateFormat, $mode=null) {
+        parent::__construct($logfile, $mode);
+        $this->setRotateDir($rotateDir);
+        $this->setRotateFormat($rotateFormat);
+        $this->setLogfile($logfile);
     }
     
-    public function setLogdir($dir) {
+    
+    public function setRotateDir($dir) {
         if (is_dir($dir)) {
-            return ($this->_logdir = $dir);
+            return ($this->_rotateDir = $dir);
         }
         return false;
     }
-    public function setLogfileFormat($format) {
-        return ($this->_logfileFormat = $format);
+    
+    
+    public function setRotateFormat($format) {
+        return ($this->_rotateFormat = $format);
     }
     
-    public function formatLogFilename($param) {
-        $out = $this->_logfileFormat;
+    
+    public function formatRotateFilename($param) {
+        $out = $this->_rotateFormat;
+        
         if (empty($out)) {
             return null;
         }
@@ -33,28 +48,37 @@ Class Zend_Log_Writer_Logfile extends Zend_Log_Writer_StreamRotatable {
             }
             $out = str_replace("%$key%", $value, $out);
         }
+        
         return $out;
     }
     
-    public function formatLogFile($param) {
-        $fn = $this->formatLogFilename($param);
+    
+    public function formatRotateFile($param) {
+        $fn = $this->formatRotateFilename($param);
         if (null !== $fn) {
-            return $this->_logdir . DIRECTORY_SEPARATOR . $fn;
+            return $this->_rotateDir . DIRECTORY_SEPARATOR . $fn;
         }
         return null;
     }
+    
     
     public function setLogfile($file) {
         return ($this->_logfile = $file);    
     }
     
+    
     public function getLogfile() {
         return $this->_logfile;
     }
     
+    
     public function rotate($param, $mode=NULL) {
-       $f = $this->formatLogFile($param);
-       $this->setLogfile($f);
-       return parent::rotate($f, $mode);
+        $this->shutdown();
+        $logf = $this->getLogfile();
+        if (file_exists($logf)) {
+            rename($logf, $this->formatRotateFile($param));    
+        }
+        
+        $this->open($logf, $mode);
     }
 }
