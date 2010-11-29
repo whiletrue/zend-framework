@@ -76,9 +76,15 @@ Class Zend_Log_Writer_Logfile extends Zend_Log_Writer_StreamRotatable {
         $this->shutdown();
         $logf = $this->getLogfile();
         if (file_exists($logf)) {
-            rename($logf, $this->formatRotateFile($param));    
+            $rotateFile = $this->formatRotateFile($param);
+            $rotateDir = dirname($rotateFile);
+            if (!is_dir($rotateDir) && !mkdir($rotateDir, 0755, true)) {
+                require_once 'Zend/Log/Exception.php';
+                $msg = "Rotate dir \"$rotateDir\" can not be created!";
+                throw new Zend_Log_Exception($msg);
+            }
+            rename($logf, $rotateFile);    
         }
-        
         $this->open($logf, $mode);
     }
 }
