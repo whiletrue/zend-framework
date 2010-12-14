@@ -66,13 +66,23 @@ Class Zend_Application_Resource_Log extends Zend_Application_Resource_ResourceAb
             $params = array($params);
         }
         
-        $writer = $this->_createWriter($writerCfg['type'], $params);
+        $writer = $this->_createClass($writerCfg['type'], $params);
         if (null === $writer) {
             return null;
         }
         
-        $lc = (isset($opts['logger'])) ? $opts['logger'] : $this->getLoggerClass();
+        if (isset($writerCfg['formatter']['type'])) {
+            $params = (isset($writerCfg['formatter']['params'])) ? $writerCfg['formatter']['params'] : array();
+            if (!is_array($params)) {
+                $params = array($params);
+            }
+            $formatter = $this->_createClass($writerCfg['formatter']['type'], $params);
+            if (null !== $writer) {
+                $writer->setFormatter($formatter);
+            }
+        }
         
+        $lc = (isset($opts['logger'])) ? $opts['logger'] : $this->getLoggerClass();
         if (!class_exists($lc)) {
             require_once 'Zend/Loader.php';
             Zend_Loader::loadClass($lc);
@@ -83,18 +93,17 @@ Class Zend_Application_Resource_Log extends Zend_Application_Resource_ResourceAb
     }
     
     
-    protected function _createWriter($writerClass, $opts=array()) {
-        
-        if (!class_exists($writerClass)) {
+    protected function _createClass($class, $opts=array()) {
+        if (!class_exists($class)) {
             require_once 'Zend/Loader.php';
-            Zend_Loader::loadClass($writerClass);   
+            Zend_Loader::loadClass($class);   
         }
         
         if (empty($opts)) {
-            return new $writerClass;
+            return new $class;
         } else {
             try {
-                $ref = new ReflectionClass($writerClass);
+                $ref = new ReflectionClass($class);
                 return $ref->newInstanceArgs($opts);
             } catch(ReflectionException $ex) {
                 error_log($ex->getMessage());
