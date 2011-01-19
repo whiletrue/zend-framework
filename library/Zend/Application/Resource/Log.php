@@ -82,6 +82,12 @@ Class Zend_Application_Resource_Log extends Zend_Application_Resource_ResourceAb
             }
         }
         
+        if (isset($writerCfg['priority'])) {
+            $prio = (int) $writerCfg['priority'];
+            $filter = new Zend_Log_Filter_Priority($prio);
+            $writer->addFilter($filter);
+        }
+        
         $lc = (isset($opts['logger'])) ? $opts['logger'] : $this->getLoggerClass();
         if (!class_exists($lc)) {
             require_once 'Zend/Loader.php';
